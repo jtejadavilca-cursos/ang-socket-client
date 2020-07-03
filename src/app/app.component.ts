@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
     this.chatService
           .getPrivateMessage()
           .subscribe( msg => {
-            console.log('Mensaje privado : ', msg);
+            //
           });
   }
 }

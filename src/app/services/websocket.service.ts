@@ -3,6 +3,7 @@ import { Socket } from 'ngx-socket-io';
 import * as typeFn from '../utils/functions.types';
 import { Observable } from 'rxjs';
 import { Usuario } from '../models/usuario.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class WebsocketService {
   public socketStatus = false;
 
   constructor(
-    private socket: Socket
+    private socket: Socket,
+    private router: Router
   ) {
     this.checkStatus();
     this.leerStorage();
@@ -30,6 +32,7 @@ export class WebsocketService {
   checkStatus(): void {
     this.socket.on('connect', () => {
       this.socketStatus = true;
+      this.leerStorage();
     });
     this.socket.on('disconnect', () => {
       this.socketStatus = false;
@@ -50,10 +53,10 @@ export class WebsocketService {
     return this.socket.fromEvent( evento );
   }
 
-  loginWS(nombre: string): Promise<void> {
+  loginWS(nombre: string, isNew: boolean): Promise<void> {
     return new Promise(( resolve, reject ) => {
       this.emit('configurar-usuario', { nombre: nombre.trim() }, (resp) => {
-        if (this.usuario == null) {
+        if (this.usuario == null || isNew) {
           this.usuario = new Usuario( nombre );
           this.guardarStorage();
         }
@@ -61,7 +64,17 @@ export class WebsocketService {
       });
 
     });
+  }
 
+  logoutWS(): void {
+    this.usuario = null;
+    localStorage.removeItem('usuario');
+
+    const payload = {
+      nombre: 'sin-nombre'
+    };
+    this.emit('configurar-usuario', payload);
+    this.router.navigateByUrl('');
   }
 
   guardarStorage(): void {
@@ -72,7 +85,7 @@ export class WebsocketService {
     const jsonUsuario = localStorage.getItem('usuario');
     if (jsonUsuario) {
       this.usuario = JSON.parse(jsonUsuario);
-      this.loginWS(this.usuario.nombre)
+      this.loginWS(this.usuario.nombre, false)
         .then(() => {
           console.log('Usuario configurano nuevamente');
         });

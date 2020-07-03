@@ -20,11 +20,19 @@ export class ChatService {
     this.wsService.emit('mensaje', payload);
   }
 
+  solicitarUsuarios(): void {
+    this.wsService.emit('obtener-usuarios');
+  }
+
   getMessage(): Observable<any> {
     return this.wsService.listen('mensaje-nuevo');
   }
 
   getPrivateMessage(): Observable<any> {
     return this.wsService.listen('mensaje-privado');
+  }
+
+  getUsuarioActivos(): Observable<any> {
+    return this.wsService.listen('usuarios-activos');
   }
 }

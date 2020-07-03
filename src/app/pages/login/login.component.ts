@@ -10,13 +10,13 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
 
   nombre = '';
+
   constructor(
     public wsService: WebsocketService,
     private router: Router
   ) { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void { }
 
   ingresar(): void{
     if ( this.nombre.trim().length === 0) {
@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
     }
 
     console.log('Nombre : ', this.nombre);
-    this.wsService.loginWS(this.nombre)
+    this.wsService.loginWS(this.nombre, true)
       .then( () => {
         this.router.navigateByUrl('/mensajes');
       });
