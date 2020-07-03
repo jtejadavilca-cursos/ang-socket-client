@@ -119,6 +119,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "cliente-basico"
+    }
+  },
+  "defaultProject": "cliente-basico",
+  "cli": {
+    "analytics": true
+  }
 }
